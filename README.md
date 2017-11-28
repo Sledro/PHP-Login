@@ -27,7 +27,10 @@ CREATE TABLE `login_system`.`login_attempts` (
 ```
 INSERT INTO `login_system`.`users` VALUES(1, 'test', '$2y$10$IrzYJi10j3Jy/K6jzSLQtOLif1wEZqTRQoK3DcS3jdnFEhL4fWM4G');
 ```
-You now have 
+Login With:
+Username: test
+Password: 6ZaxN2Vzm9NUJT2
+
 # Acknowledgments 
 Thanks to the following for their help on this project
 
