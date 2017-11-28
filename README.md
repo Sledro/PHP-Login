@@ -24,6 +24,10 @@ CREATE TABLE `login_system`.`login_attempts` (
     `time` VARCHAR(30) NOT NULL
 ) ENGINE=InnoDB
 ```
+```
+INSERT INTO `login_system`.`users` VALUES(1, 'test', '$2y$10$IrzYJi10j3Jy/K6jzSLQtOLif1wEZqTRQoK3DcS3jdnFEhL4fWM4G');
+```
+You now have 
 # Acknowledgments 
 Thanks to the following for their help on this project
 
