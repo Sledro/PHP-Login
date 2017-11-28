@@ -18,3 +18,8 @@ CREATE TABLE `login_system`.`users` (
     `password` CHAR(128) NOT NULL
 ) ENGINE = InnoDB;
 ```
+# Acknowledgments 
+Thanks to the following for their help on this project
+
+* [Bootsnipp](https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form#comments) - The Bootstrap Theme
+* [Wikihow](https://www.wikihow.com/Create-a-Secure-Login-Script-in-PHP-and-MySQL) - Parts of this tutorial were used
