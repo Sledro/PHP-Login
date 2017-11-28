@@ -18,6 +18,12 @@ CREATE TABLE `login_system`.`users` (
     `password` CHAR(128) NOT NULL
 ) ENGINE = InnoDB;
 ```
+```
+CREATE TABLE `login_system`.`login_attempts` (
+    `user_id` INT(11) NOT NULL,
+    `time` VARCHAR(30) NOT NULL
+) ENGINE=InnoDB
+```
 # Acknowledgments 
 Thanks to the following for their help on this project
 
