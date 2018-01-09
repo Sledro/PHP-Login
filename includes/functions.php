@@ -1,7 +1,6 @@
 <?php
 
-//Credit to https://www.wikihow.com/Create-a-Secure-Login-Script-in-PHP-and-MySQL for the secure session function (Slightly Modified)
-
+    //Credit to https://www.wikihow.com/Create-a-Secure-Login-Script-in-PHP-and-MySQL for the secure session function (Slightly Modified)
     function sec_session_start() {
         define("SECURE", FALSE); 
         $session_name = 'sec_session_id';   // Set a custom session name 
@@ -20,6 +19,18 @@
         session_name($session_name);
         session_start();            // Start the PHP session 
         session_regenerate_id();    // regenerated the session, delete the old one. 
+    }
+
+    function login($username, $password, $conn) {
+
+        $stmt = $conn->prepare("SELECT username, password FROM users WHERE username=:username");
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        echo $username;
+        print_r($result);
+        
     }
 
 ?> 
