@@ -3,12 +3,23 @@ include_once 'includes/db-connect.php';
 include_once 'includes/functions.php';
  
 sec_session_start();
+
+//This cron job unlocks all locked out accounts
+unlockerCronJob($conn);
+
+//Note an SSL connection is required to prevent network sniffing
+
 $error="";
 if(isset($_GET["error"])){
-	if($_GET["error"]=="1")
-		$error='<div class="col-lg-12"><div class="alert alert-danger"><strong>Oops.. Inavlid Username or Password! </br>Your I.P Address has been recorded.</strong></div>';
+	if($_GET["error"]=="1"){
+		$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_GET['username']); //XSS Security
+		$error='<div class="col-lg-12"><div class="alert alert-warning">The username <strong>'.$username.'</strong> & password combination cannot be authenticated at the moment. </strong></div>';
+	}
+	if($_GET["error"]=="2"){
+		$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_GET['username']); //XSS Security
+		$error='<div class="col-lg-12"><div class="alert alert-danger"><strong>The username <strong>'.$username.'</strong> has been locked out for too many failed login attempts! Please try again later.. </strong></div>';
+	}
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -34,7 +45,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 				<div class="panel-heading">
 					<div class="row">
 						<div class="col-xs-6">
-							<a href="#" class="active" id="login-form-link">Login</a>
+							<a href="./index.php" class="active" id="login-form-link">Login</a>
 						</div>
 						<div class="col-xs-6">
 							<a href="#" id="register-form-link">Register</a>

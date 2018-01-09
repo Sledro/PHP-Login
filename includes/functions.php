@@ -1,5 +1,5 @@
 <?php
-
+unlockerCronJob($conn);
     //Credit to https://www.wikihow.com/Create-a-Secure-Login-Script-in-PHP-and-MySQL for the secure session function (Slightly Modified)
     function sec_session_start() {
         define("SECURE", FALSE); 
@@ -25,42 +25,75 @@
 
         $username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $username); //XSS Security
 
-        $stmt = $conn->prepare("SELECT username, password FROM users WHERE username=:username");
+            $stmt = $conn->prepare("SELECT username, password FROM users WHERE username=:username");
+            $stmt->bindParam(':username', $username);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($stmt->rowCount() > 0) {
+            
+                $hash=$result['password'];
+        
+                if (password_verify($password, $hash)) {
+                    $_SESSION['username']=$result['username'];
+                    return true;
+                } else {
+                    invlid_login_attempt($username, $conn);
+                    return false; //Invalid Password
+                }
+            } else {
+                invlid_login_attempt($username, $conn);
+                return false; //Username not found
+            }
+    }
+
+    function invlid_login_attempt($username, $conn) {
+
+       
+        $stmt = $conn->prepare("SELECT username FROM login_attempts WHERE username=:username");
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
+        
+        if ($stmt->rowCount() > 0) {
+            $currtime = time();
+            // Increment login attempt counter
+            $stmt = $conn->prepare("UPDATE login_attempts SET attemptNo = attemptNo + 1, time = $currtime WHERE ( username = :username )");
+            $stmt->bindParam(':username', $username);
+            $stmt->execute();
+        }else{
+            $num=1;
+            $currtime = time();
+            // prepare sql and bind parameters
+            $stmt = $conn->prepare("INSERT INTO login_attempts (username, time, attemptNo)
+            VALUES (:username, :timenow, :attemptNo)");
+            $stmt->bindParam(':username', $username);
+            $stmt->bindParam(':timenow', $currtime);
+            $stmt->bindParam(':attemptNo', $num);
+            $stmt->execute();
+        }
+    
+    }
+
+    function checkIfLockedOut($username, $conn) {
+        $stmt = $conn->prepare("SELECT attemptNo FROM login_attempts WHERE username=:username");
         $stmt->bindParam(':username', $username);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($stmt->rowCount() > 0) {
-           
-            //Will need this again for register funtion
-            //Plain-text password
-            //$password = 'password';
-            //$options = ['cost' => 12];
-            //PHP Native hashing
-            //password_hash($password, PASSWORD_DEFAULT, $options);
-            $hash=$result['password'];
-    
-            if (password_verify($password, $hash)) {
-                $_SESSION['username']=$username;
-                return true;
-            } else {
-                invlid_login_attempt($username, $conn);
-                return false; //Invalid Password
-            }
-          } else {
-             invlid_login_attempt($username, $conn);
-             return false; //Username not found
-          }
-    }
+        if($result['attemptNo'] > 3){
+            $true="true";
+            return $true;
+        }else{
+            $false="false";
+            return $false;
+        }
+    } 
 
-    function invlid_login_attempt($username, $conn) {
-        $currtime = time();
-        // prepare sql and bind parameters
-        $stmt = $conn->prepare("INSERT INTO login_attempts (username, time)
-        VALUES (:username, :timenow)");
-        $stmt->bindParam(':username', $username);
-        $stmt->bindParam(':timenow', $currtime);
+    function unlockerCronJob($conn) {
+        $unclockTime = time()-300;
+        $stmt = $conn->prepare("UPDATE login_attempts SET attemptNo = 0 WHERE attemptNo>'3' AND time < $unclockTime");
         $stmt->execute();
-    }
+
+    } 
 
 ?> 
