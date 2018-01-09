@@ -37,7 +37,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 					<hr>
 				</div>
 				<div class="panel-body">
-                Thanks for loggin in. Welcome to the private members area.
+                Thanks for loggin in <? echo htmlentities($_SESSION['username']);?>. Welcome to the private members area.
 				</div>
 			</div>
 		</div>

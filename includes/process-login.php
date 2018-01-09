@@ -8,15 +8,15 @@ if (isset($_POST['username'], $_POST['password'])) {
     $username = $_POST['username'];
     $password = $_POST['password']; // The hashed password.
  
-    echo login($username, $password, $conn);
+    //echo login($username, $password, $conn); 
 
-    /*if (login($email, $password, $conn) == true) {
+    if (login($username, $password, $conn) == true) {
         // Login success 
-        header('Location: ../protected_page.php');
+        header('Location: ../membersArea.php');
     } else {
         // Login failed 
         header('Location: ../index.php?error=1');
-    }*/
+    }
 } else {
     // The correct POST variables were not sent to this page. 
     echo 'Invalid Request';

@@ -22,15 +22,30 @@
     }
 
     function login($username, $password, $conn) {
-
+        
         $stmt = $conn->prepare("SELECT username, password FROM users WHERE username=:username");
         $stmt->bindParam(':username', $username);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        echo $username;
-        print_r($result);
-        
+        if ($stmt->rowCount() > 0) {
+           
+            //Will need this again for register funtion
+            //Plain-text password
+            //$password = 'password';
+            //$options = ['cost' => 12];
+            //PHP Native hashing
+            //password_hash($password, PASSWORD_DEFAULT, $options);
+            $hash=$result['password'];
+    
+            if (password_verify($password, $hash)) {
+                return true;
+            } else {
+                return false; //Invalid Password
+            }
+          } else {
+             return false; //Username not found
+          }
     }
 
 ?> 
