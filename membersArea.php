@@ -27,18 +27,23 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 			<div class="panel panel-login">
 				<div class="panel-heading">
 					<div class="row">
-						<div class="col-xs-6">
-							<a href="#" class="active" id="login-form-link">Login</a>
-						</div>
-						<div class="col-xs-6">
-							<a href="#" id="register-form-link">Register</a>
+						<div class="col-xs-15">
+							<a href="./membersArea.php" id="login-form-link">Members Area</a>
 						</div>
 					</div>
 					<hr>
 				</div>
 				<div class="panel-body">
-                Thanks for loggin in <?php echo htmlentities($_SESSION['username']); ?> Welcome to the private members area.
-				</div>
+
+				Welcome, <b><?php echo htmlentities($_SESSION['username']); ?></b></br></br>
+                Thanks for loggin in to the secure Members Area  Welcome to the private members area.
+				</br></br>
+
+				<a href="./logout.php" id="register-form-link">Click here to Logout.</a>
+				</br></br>
+
+				<a href="#" id="register-form-link">Click here to reset your password.</a>
+			</div>
 			</div>
 		</div>
 	</div>

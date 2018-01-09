@@ -41,6 +41,7 @@
             $hash=$result['password'];
     
             if (password_verify($password, $hash)) {
+                $_SESSION['username']=$username;
                 return true;
             } else {
                 invlid_login_attempt($username, $conn);

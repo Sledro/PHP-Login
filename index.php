@@ -6,7 +6,7 @@ sec_session_start();
 $error="";
 if(isset($_GET["error"])){
 	if($_GET["error"]=="1")
-		$error='<div class="col-lg-12"><div class="alert alert-danger"><strong>Inavlid Username or Password!</strong></div>';
+		$error='<div class="col-lg-12"><div class="alert alert-danger"><strong>Oops.. Inavlid Username or Password! </br>Your I.P Address has been recorded.</strong></div>';
 }
 
 ?>
