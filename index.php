@@ -1,4 +1,9 @@
-
+<?php
+include_once 'includes/db-connect.php';
+include_once 'includes/functions.php';
+ 
+sec_session_start();
+?>
 <!DOCTYPE html>
 <html lang="en-US">
 <!--
