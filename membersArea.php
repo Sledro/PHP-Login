@@ -3,6 +3,13 @@ include_once 'includes/db-connect.php';
 include_once 'includes/functions.php';
  
 sec_session_start();
+
+if(isset($_SESSION['username']))
+$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_SESSION['username']); //XSS Security
+
+if(isUserLoggedIn($username,$conn)=="false")
+header('Location: ./index.php');
+
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
