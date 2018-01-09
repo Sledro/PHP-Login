@@ -1,7 +1,7 @@
 <?php
 
 //Credit to https://www.wikihow.com/Create-a-Secure-Login-Script-in-PHP-and-MySQL for how to destroy the session
-
+include_once 'includes/db-connect.php';
 include_once './includes/functions.php';
 sec_session_start();
  

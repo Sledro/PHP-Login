@@ -35,7 +35,11 @@ unlockerCronJob($conn);
                 $hash=$result['password'];
         
                 if (password_verify($password, $hash)) {
+                                              
+                    $user_browser = $_SERVER['HTTP_USER_AGENT'];
                     $_SESSION['username']=$result['username'];
+                    $_SESSION['login_string']=hash('sha512', $hash . $user_browser);
+
                     return true;
                 } else {
                     invlid_login_attempt($username, $conn);
@@ -93,6 +97,30 @@ unlockerCronJob($conn);
         $unclockTime = time()-300;
         $stmt = $conn->prepare("UPDATE login_attempts SET attemptNo = 0 WHERE attemptNo>'3' AND time < $unclockTime");
         $stmt->execute();
+
+    } 
+
+    function isUserLoggedIn($username, $conn) {
+        $user_browser = $_SERVER['HTTP_USER_AGENT'];
+
+        $stmt = $conn->prepare("SELECT password FROM users WHERE username=:username");
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $login_string=null;
+        $login_string=hash('sha512', $result['password'] . $user_browser);
+ 
+
+        $login_string_session=null;
+        if(isset($_SESSION['login_string']))
+            $login_string_session=$_SESSION['login_string'];
+
+        if($login_string==$login_string_session && $username==$_SESSION['username']){
+            return "true";
+        }else{
+            return "false";
+        }
 
     } 
 

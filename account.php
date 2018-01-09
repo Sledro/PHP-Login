@@ -28,7 +28,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 				<div class="panel-heading">
 					<div class="row">
 						<div class="col-xs-15">
-							<a href="./membersArea.php" id="login-form-link">Members Area</a>
+							<a href="./membersArea.php" id="login-form-link">Account</a>
 						</div>
 					</div>
 					<hr>
@@ -37,8 +37,8 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 				<nav class="navbar navbar-default">
 				<div class="container-fluid">
 					<ul class="nav navbar-nav">
-					<li class="active"><a href="./membersArea.php">Members Area</a></li>
-					<li><a href="./account.php">Account</a></li>
+					<li><a  href="./membersArea.php">Members Area</a></li>
+					<li class="active"><a href="./account.php">Account</a></li>
 					<li><a href="#">News</a></li>
 					<li><a href="./logout.php">Logout</a></li>
 					</ul>

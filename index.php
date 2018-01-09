@@ -8,6 +8,11 @@ sec_session_start();
 unlockerCronJob($conn);
 
 //Note an SSL connection is required to prevent network sniffing
+if(isset($_SESSION['username']))
+	$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_SESSION['username']); //XSS Security
+
+if(isUserLoggedIn($username,$conn)=="true")
+	header('Location: ./membersArea.php');
 
 $error="";
 if(isset($_GET["error"])){
