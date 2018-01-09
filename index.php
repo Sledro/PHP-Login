@@ -3,6 +3,12 @@ include_once 'includes/db-connect.php';
 include_once 'includes/functions.php';
  
 sec_session_start();
+$error="";
+if(isset($_GET["error"])){
+	if($_GET["error"]=="1")
+		$error='<div class="col-lg-12"><div class="alert alert-danger"><strong>Inavlid Username or Password!</strong></div>';
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -39,6 +45,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 				<div class="panel-body">
 					<div class="row">
 						<div class="col-lg-12">
+							<?php echo $error;?>
 							<form id="login-form" action="includes/process-login.php" method="post" role="form" style="display: block;">
 								<div class="form-group">
 									<input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">

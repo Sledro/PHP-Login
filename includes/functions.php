@@ -22,7 +22,9 @@
     }
 
     function login($username, $password, $conn) {
-        
+
+        $username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $username); //XSS Security
+
         $stmt = $conn->prepare("SELECT username, password FROM users WHERE username=:username");
         $stmt->bindParam(':username', $username);
         $stmt->execute();
@@ -41,11 +43,23 @@
             if (password_verify($password, $hash)) {
                 return true;
             } else {
+                invlid_login_attempt($username, $conn);
                 return false; //Invalid Password
             }
           } else {
+             invlid_login_attempt($username, $conn);
              return false; //Username not found
           }
+    }
+
+    function invlid_login_attempt($username, $conn) {
+        $currtime = time();
+        // prepare sql and bind parameters
+        $stmt = $conn->prepare("INSERT INTO login_attempts (username, time)
+        VALUES (:username, :timenow)");
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':timenow', $currtime);
+        $stmt->execute();
     }
 
 ?> 
