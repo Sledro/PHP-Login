@@ -124,4 +124,15 @@ unlockerCronJob($conn);
 
     } 
 
+    function isValid($str) {
+        return !preg_match('/[^A-Za-z0-9.#\\-$]/', $str);
+    }
+
+    function register($username, $password, $passwordConfirm, $conn){
+        if(!isValid($username)){
+            $error="Your usernname can only conain alphanumeric charaters.";
+            return $error;
+        }
+    }
+
 ?> 

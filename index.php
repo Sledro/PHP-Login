@@ -24,6 +24,13 @@ if(isset($_GET["error"])){
 		$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_GET['username']); //XSS Security
 		$error='<div class="col-lg-12"><div class="alert alert-danger"><strong>The username <strong>'.$username.'</strong> has been locked out for too many failed login attempts! Please try again later.. </strong></div>';
 	}
+	if($_GET["error"]=="3"){
+		$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_GET['username']); //XSS Security
+		$error='<div class="col-lg-12"><div class="alert alert-warning"><strong>The username <strong>'.$username.'</strong> is invalid. Please use alphanumerical charaters only. </strong></div>';
+	}
+	if($_GET["error"]=="4"){
+		$error='<div class="col-lg-12"><div class="alert alert-warning">Your passwords did not match.</div>';
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -62,7 +69,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 					<div class="row">
 						<div class="col-lg-12">
 							<?php echo $error;?>
-							<form id="login-form" action="includes/process-login.php" method="post" role="form" style="display: block;">
+							<form id="login-form" action="./includes/process-login.php" method="post" role="form" style="display: block;">
 								<div class="form-group">
 									<input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
 								</div>
@@ -86,7 +93,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 									</div>
 								</div>
 							</form>
-							<form id="register-form" action="register.php" method="post" role="form" style="display: none;">
+							<form id="register-form" action="./includes/process-register.php" method="post" role="form" style="display: none;">
 								<div class="form-group">
 									<input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
 								</div>
@@ -94,7 +101,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 									<input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
 								</div>
 								<div class="form-group">
-									<input type="password" name="confirm-password" id="confirm-password" tabindex="2" class="form-control" placeholder="Confirm Password">
+									<input type="password" name="passwordConfirm" id="passwordConfirm" tabindex="2" class="form-control" placeholder="Confirm Password">
 								</div>
 								<div class="form-group">
 									<div class="row">
