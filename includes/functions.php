@@ -124,8 +124,12 @@ unlockerCronJob($conn);
 
     } 
 
-    function isValid($str) {
-        return !preg_match('/[^A-Za-z0-9.#\\-$]/', $str);
+    function isValidUsername($username) {
+       return preg_match("/[^a-zA-Z0-9]+/", $username);
+    }
+
+    function isValidPassword($password) {
+        return !preg_match('/^(?=[a-z])(?=[A-Z])[a-zA-Z]{8,}$/', $password);
     }
 
     function register($username, $password, $passwordConfirm, $conn){

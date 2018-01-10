@@ -10,25 +10,32 @@ if (isset($_POST['username'], $_POST['password'], $_POST['passwordConfirm'])) {
     $username = $_POST['username'];
     $password = $_POST['password']; 
     $passwordConfirm = $_POST['passwordConfirm']; 
-    $username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $username); //XSS Security
 
-    if($password!=$passwordConfirm){
+    if($password==$passwordConfirm){
 
-        if(isValid($username)==0){
-            if (register($username, $password, $passwordConfirm, $conn) == true) {
-                // register success 
-                header('Location: ../membersArea.php');
-            } else {
-                // register failed 
-                header('Location: ../index.php?error=1&username='.$username);
-            }
+        if(isValidUsername($username)==0){
+
+            if(isValidPassword($password)==0){
+
+                if (register($username, $password, $passwordConfirm, $conn) == true) {
+                    // register success 
+                    header('Location: ../membersArea.php');
+                } else {
+                    // register failed 
+                    header('Location: ../index.php?error=1&username='.$username);
+                }
+
+             }else{
+            // password failed 
+            header('Location: ../index.php?error=5');     
+             }
         }else{
-                // register failed 
-                header('Location: ../index.php?error=3&username='.$username);     
+            // register failed 
+            header('Location: ../index.php?error=3');     
         }
     }else{
-                // confirm password failed
-                header('Location: ../index.php?error=4&username='.$username);          
+        // confirm password failed
+        header('Location: ../index.php?error=4');          
     }
 } else {
     // The correct POST variables were not sent to this page. 
