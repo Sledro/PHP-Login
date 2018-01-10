@@ -14,28 +14,16 @@ if(isset($_SESSION['username']))
 if(isUserLoggedIn($username,$conn)=="true")
 	header('Location: ./membersArea.php');
 
-$error="";
+//Error handling
+$error=null;
 if(isset($_GET["error"])){
-	if($_GET["error"]=="1"){
-		$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_GET['username']); //XSS Security
-		$error='<div class="col-lg-12"><div class="alert alert-warning">The username <strong>'.$username.'</strong> & password combination cannot be authenticated at the moment. </strong></div>';
-	}
-	if($_GET["error"]=="2"){
-		$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_GET['username']); //XSS Security
-		$error='<div class="col-lg-12"><div class="alert alert-danger"><strong>The username <strong>'.$username.'</strong> has been locked out for too many failed login attempts! Please try again later.. </strong></div>';
-	}
-	if($_GET["error"]=="3"){
-		$error='<div class="col-lg-12"><div class="alert alert-warning">The username you entered is invalid. Please use alphanumerical charaters only./div>';
-	}
-	if($_GET["error"]=="4"){
-		$error='<div class="col-lg-12"><div class="alert alert-warning">Your passwords did not match.</div>';
-	}
-	if($_GET["error"]=="5"){
-		$error='<div class="col-lg-12"><div class="alert alert-warning">Your passwords must meet the following criteria: </br></br>  
-		- The password has at least 8 characters.</br> 
-		- Consists of one capital & one lowercase letter.</div>';
+	if(!is_numeric($_GET["error"])){
+		$error="Dont not edit the URL GET var, thanks.";
+	}else{
+		$error = errorLogging($_GET["error"]);
 	}
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en-US">

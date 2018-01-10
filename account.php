@@ -7,7 +7,7 @@ sec_session_start();
 if(isset($_SESSION['username']))
 $username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_SESSION['username']); //XSS Security
 
-if(isUserLoggedIn($username,$conn)=="false"){
+if(isUserLoggedIn($username,$conn)=="false")
     header('Location: ./index.php');
 ?>
 <!DOCTYPE html>

@@ -1,6 +1,7 @@
 <?php
 unlockerCronJob($conn);
     //Credit to https://www.wikihow.com/Create-a-Secure-Login-Script-in-PHP-and-MySQL for the secure session function (Slightly Modified)
+    //I could have jused used session_start() but this function is widely used and adds extra security.
     function sec_session_start() {
         define("SECURE", FALSE); 
         $session_name = 'sec_session_id';   // Set a custom session name 
@@ -42,16 +43,16 @@ unlockerCronJob($conn);
 
                     return true;
                 } else {
-                    invlid_login_attempt($username, $conn);
+                    invlidLoginAttempt($username, $conn);
                     return false; //Invalid Password
                 }
             } else {
-                invlid_login_attempt($username, $conn);
+                invlidLoginAttempt($username, $conn);
                 return false; //Username not found
             }
     }
 
-    function invlid_login_attempt($username, $conn) {
+    function invlidLoginAttempt($username, $conn) {
 
        
         $stmt = $conn->prepare("SELECT username FROM login_attempts WHERE username=:username");
@@ -129,12 +130,61 @@ unlockerCronJob($conn);
     }
 
     function isValidPassword($password) {
-        return !preg_match('/^(?=[a-z])(?=[A-Z])[a-zA-Z]{8,}$/', $password);
+        return preg_match('/^(?=[a-z])(?=[A-Z])[a-zA-Z]{8,}$/', $password);
     }
 
+    //Used to add a a user to the database. Input is sanitized before it gets here.
     function register($username, $password, $passwordConfirm, $conn){
-        if(!isValid($username)){
-            $error="Your usernname can only conain alphanumeric charaters.";
+        $error=false;
+        if(isValidUsername($username)==1){
+            $error=true;
+            return "3";
+        }
+        if($password!=$passwordConfirm){
+            $error=true;
+            return "4";
+        }
+        if(isValidPassword($password)==1){
+            $error=true;
+            return "5";
+        }
+        if($error==false){
+
+            $options = ['cost' => 12];
+        
+            // prepare sql and bind parameters
+            $stmt = $conn->prepare("INSERT INTO users (username, password)
+            VALUES (:username, :password)");
+            $stmt->bindParam(':username', $username);
+            $stmt->bindParam(':password', password_hash($password, PASSWORD_DEFAULT, $options));
+            $stmt->execute();    
+            
+            return "0";
+        }
+    }
+
+    function errorLogging($errorNum){
+        $error="";
+        if(isset($_GET["error"])){
+            if($_GET["error"]=="1"){
+                $username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_GET['username']); //XSS Security
+                $error='<div class="col-lg-12"><div class="alert alert-warning">The username <strong>'.$username.'</strong> & password combination cannot be authenticated at the moment. </strong></div>';
+            }
+            if($_GET["error"]=="2"){
+                $username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_GET['username']); //XSS Security
+                $error='<div class="col-lg-12"><div class="alert alert-danger"><strong>The username <strong>'.$username.'</strong> has been locked out for too many failed login attempts! Please try again later.. </strong></div>';
+            }
+            if($_GET["error"]=="3"){
+                $error='<div class="col-lg-12"><div class="alert alert-warning"><strong>The username you entered is invalid. Please use alphanumerical charaters only. </strong></div>';
+            }
+            if($_GET["error"]=="4"){
+                $error='<div class="col-lg-12"><div class="alert alert-warning">Your passwords did not match.</div>';
+            }
+            if($_GET["error"]=="5"){
+                $error='<div class="col-lg-12"><div class="alert alert-warning">Your passwords must meet the following criteria: </br></br>  
+                - The password has at least 8 characters.</br> 
+                - Consists of one capital & one lowercase letter.</div>';
+            }
             return $error;
         }
     }

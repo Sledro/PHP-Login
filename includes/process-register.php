@@ -11,32 +11,20 @@ if (isset($_POST['username'], $_POST['password'], $_POST['passwordConfirm'])) {
     $password = $_POST['password']; 
     $passwordConfirm = $_POST['passwordConfirm']; 
 
-    if($password==$passwordConfirm){
-
-        if(isValidUsername($username)==0){
-
-            if(isValidPassword($password)==0){
-
-                if (register($username, $password, $passwordConfirm, $conn) == true) {
-                    // register success 
-                    header('Location: ../membersArea.php');
-                } else {
-                    // register failed 
-                    header('Location: ../index.php?error=1&username='.$username);
-                }
-
-             }else{
-            // password failed 
-            header('Location: ../index.php?error=5');     
-             }
-        }else{
-            // register failed 
-            header('Location: ../index.php?error=3');     
-        }
-    }else{
-        // confirm password failed
-        header('Location: ../index.php?error=4');          
+    if (register($username, $password, $passwordConfirm, $conn) == 0) {
+        // register success 
+        header('Location: ../membersArea.php');
+    } else  if(register($username, $password, $passwordConfirm, $conn) == 3){
+        // register failed 
+        header('Location: ../register.php?error=3');
+    } else  if(register($username, $password, $passwordConfirm, $conn) == 4){
+        // register failed 
+        header('Location: ../register.php?error=4');
+    }else  if(register($username, $password, $passwordConfirm, $conn) == 5){
+        // register failed 
+        header('Location: ../register.php?error=5');
     }
+
 } else {
     // The correct POST variables were not sent to this page. 
     echo 'Invalid Request';
