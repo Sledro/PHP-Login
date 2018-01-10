@@ -51,14 +51,11 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 					</ul>
 				</div>
 				</nav>
-				Welcome, <b><?php echo htmlentities($_SESSION['username']); ?></b></br></br>
-                Thanks for loggin in to the secure Members Area  Welcome to the private members area.
+				Welcome, <b><?php echo htmlentities($username); ?></b></br></br>
+                Thanks for logging into the secure Members Area  Welcome to the private members area.
 				</br></br>
 
-				<a href="./logout.php" id="register-form-link">Click here to Logout.</a>
-				</br></br>
-
-				<a href="#" id="register-form-link">Click here to reset your password.</a>
+				To change you account settings, such as your password, click the 'Account' option locaed in the navigation menu bar.
 			</div>
 			</div>
 		</div>

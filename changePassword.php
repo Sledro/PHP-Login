@@ -2,20 +2,18 @@
 include_once 'includes/db-connect.php';
 include_once 'includes/functions.php';
  
-//TODO: Add html input filtering
-// o	Complexity rules regarding the password should be enforced for resetting password
-
 sec_session_start();
 
 //This cron job unlocks all locked out accounts
 unlockerCronJob($conn);
 
+$username=null;
 //Note an SSL connection is required to prevent network sniffing
 if(isset($_SESSION['username']))
 	$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_SESSION['username']); //XSS Security
 
-if(isUserLoggedIn($username,$conn)=="true")
-	header('Location: ./membersArea.php');
+if(isUserLoggedIn($username,$conn)!="true")
+	header('Location: ./index.php');
 
 //Error handling
 $error=null;
@@ -50,39 +48,41 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 			<div class="panel panel-login">
 				<div class="panel-heading">
 					<div class="row">
-						<div class="col-xs-6">
-							<a href="./index.php" class="active" id="login-form-link">Login</a>
-						</div>
-						<div class="col-xs-6">
-							<a href="./register.php" id="register-form-link">Register</a>
+						<div class="col-xs-12">
+							<a href="./register.php" class="active" id="register-form-link">Change Password</a>
 						</div>
 					</div>
 					<hr>
 				</div>
 				<div class="panel-body">
+				<nav class="navbar navbar-default">
+				<div class="container-fluid">
+					<ul class="nav navbar-nav">
+					<li><a  href="./membersArea.php">Members Area</a></li>
+					<li class="active"><a href="./account.php">Account</a></li>
+					<li><a href="#">News</a></li>
+					<li><a href="./logout.php">Logout</a></li>
+					</ul>
+				</div>
+				</nav>
 					<div class="row">
 						<div class="col-lg-12">
 							<?php echo $error;?>
-							<form id="login-form" action="./includes/process-login.php" method="post" role="form" style="display: block;">
+							<form id="register-form" action="./includes/process-lost-password.php" method="post" role="form">
 								<div class="form-group">
-									<input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
+									<input type="password" name="oldPassword" id="oldPassword" tabindex="1" class="form-control" placeholder="Current Password">
 								</div>
 								<div class="form-group">
-									<input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
+									<input type="password" name="newPassword" id="newPassword" tabindex="2" class="form-control" placeholder="New Password">
 								</div>
+								<div class="form-group">
+									<input type="password" name="passwordConfirm" id="passwordConfirm" tabindex="2" class="form-control" placeholder="Confirm New Password">
+								</div>
+								<input type="hidden" name="username" id="username" tabindex="1" class="form-control" value="<?php echo $username?>">
 								<div class="form-group">
 									<div class="row">
 										<div class="col-sm-6 col-sm-offset-3">
-											<input type="submit" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-login" value="Log In">
-										</div>
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="text-center">
-												<a href="recover.php" tabindex="5" class="forgot-password">Forgot Password?</a>
-											</div>
+											<input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Update Password">
 										</div>
 									</div>
 								</div>

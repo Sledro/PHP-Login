@@ -185,7 +185,51 @@ unlockerCronJob($conn);
                 - The password has at least 8 characters.</br> 
                 - Consists of one capital & one lowercase letter.</div>';
             }
+            if($_GET["error"]=="6"){
+                $error='<div class="col-lg-12"><div class="alert alert-warning">Your passwords did not match.</div>';
+            }
+            if($_GET["error"]=="7"){
+                $error='<div class="col-lg-12"><div class="alert alert-warning">Your username was not found. Do not edit sessions.</div>';
+            }
+            if($_GET["error"]=="8"){
+                $error='<div class="col-lg-12"><div class="alert alert-warning">You entered an incorrect old password.</div>';
+            }
+            if($_GET["error"]=="9"){
+                $error='<div class="col-lg-12"><div class="alert alert-success">Your password has been updated.</div>';
+            }
             return $error;
+        }
+    }
+
+    function updatePassword($username, $oldPassword, $newPassword, $passwordConfirm, $conn){
+
+        if($newPassword!=$passwordConfirm){
+            return "6";
+        }
+        $options = ['cost' => 12];
+
+        $stmt = $conn->prepare("SELECT username, password FROM users WHERE username=:username");
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($stmt->rowCount() > 0) {
+        
+            $hash=$result['password'];
+
+            if (password_verify($oldPassword, $hash)) {
+
+                // Increment login attempt counter
+                $stmt = $conn->prepare("UPDATE users SET password=:newPassword WHERE username=:username ");
+                $stmt->bindParam(':newPassword', password_hash($newPassword, PASSWORD_DEFAULT, $options));
+                $stmt->bindParam(':username', $username);
+                $stmt->execute();
+
+                return "0";
+            }
+            return "8"; //Old password not correct //////error here, saying incorrect old password even tho its correct
+        }else{
+            return "7"; //Usernae not found
         }
     }
 
