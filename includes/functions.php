@@ -130,7 +130,15 @@ unlockerCronJob($conn);
     }
 
     function isValidPassword($password) {
-        return preg_match('/(?=.*[A-Z].*[A-Z])(?=.*[^a-zA-Z].*[^a-zA-Z]).{10,}',$password);
+        $uppercase = preg_match('@[A-Z]@', $password);
+        $lowercase = preg_match('@[a-z]@', $password);
+        $number    = preg_match('@[0-9]@', $password);
+        
+        if(!$uppercase || !$lowercase || !$number || strlen($password) < 8) {
+          return 0;
+        }else{
+          return 1;
+        }
     }
 
     //Used to add a a user to the database. Input is sanitized before it gets here.
@@ -181,10 +189,11 @@ unlockerCronJob($conn);
                 $error='<div class="col-lg-12"><div class="alert alert-warning">Your passwords did not match.</div>';
             }
             if($_GET["error"]=="5"){
-                $error='<div class="col-lg-12"><div class="alert alert-warning">Your passwords must meet the following criteria: </br></br>  
-                - Has at least 8 characters.</br> 
-                - Has at least 2 Upper-case characters.</br> 
-                - Has at least 2 Numbers OR Symbols.</div>';
+                $error='<div class="col-lg-12"><div class="alert alert-warning">Your passwords must meet the following criteria: </br></br>           
+    - Must be a minimum of 8 characters</br> 
+    -  Must contain at least 1 number</br> 
+    - Must contain at least one uppercase character</br> 
+    - Must contain at least one lowercase character</br></div>';
             }
             if($_GET["error"]=="6"){
                 $error='<div class="col-lg-12"><div class="alert alert-warning">Your passwords did not match.</div>';

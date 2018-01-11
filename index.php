@@ -2,9 +2,7 @@
 include_once 'includes/db-connect.php';
 include_once 'includes/functions.php';
  
-//TODO: Add html input filtering
-// o	Complexity rules regarding the password should be enforced for resetting password
-// Can enter blank username on login and maybe other forms
+//TODO:x Can enter blank username on login and maybe other forms
 
 sec_session_start();
 
@@ -14,6 +12,9 @@ unlockerCronJob($conn);
 //Note an SSL connection is required to prevent network sniffing
 if(isset($_SESSION['username']))
 	$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_SESSION['username']); //XSS Security
+
+if(isUserLoggedIn($username,$conn)=="true")
+	header('Location: ./membersArea.php');
 
 if(isUserLoggedIn($username,$conn)=="true")
 	header('Location: ./membersArea.php');

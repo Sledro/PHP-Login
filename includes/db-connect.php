@@ -10,6 +10,7 @@ try {
     }
 catch(PDOException $e)
     {
-    echo "Connection failed: " . $e->getMessage();
+    header('Location: ./setup.php');
+    //echo "Connection failed: " . $e->getMessage();
     }
 ?> 
