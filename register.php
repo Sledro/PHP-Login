@@ -84,7 +84,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 			</div>
 		</div>
 	</div>
-</div>s
+</div>
 
 </body>
 </html>
