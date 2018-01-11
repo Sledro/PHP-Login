@@ -62,10 +62,10 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 							<?php echo $error;?>
 							<form id="register-form" action="./includes/process-register.php" method="post" role="form">
 								<div class="form-group">
-									<input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
+									<input type="text" name="username" id="username" required pattern="[a-zA-Z0-9]+" title="Please use aplhanumeric charaters only." tabindex="1" class="form-control" placeholder="Username" value="">
 								</div>
 								<div class="form-group">
-									<input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
+									<input type="password" name="password" id="password" tabindex="2"  class="form-control" placeholder="Password">
 								</div>
 								<div class="form-group">
 									<input type="password" name="passwordConfirm" id="passwordConfirm" tabindex="2" class="form-control" placeholder="Confirm Password">

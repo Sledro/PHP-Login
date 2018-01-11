@@ -4,6 +4,7 @@ include_once 'includes/functions.php';
  
 //TODO: Add html input filtering
 // o	Complexity rules regarding the password should be enforced for resetting password
+// Can enter blank username on login and maybe other forms
 
 sec_session_start();
 
@@ -65,7 +66,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 							<?php echo $error;?>
 							<form id="login-form" action="./includes/process-login.php" method="post" role="form" style="display: block;">
 								<div class="form-group">
-									<input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
+									<input type="text" name="username" id="username" required pattern="[a-zA-Z0-9]+" title="Please use aplhanumeric charaters only." tabindex="1" class="form-control" placeholder="Username" value="">
 								</div>
 								<div class="form-group">
 									<input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">

@@ -130,7 +130,7 @@ unlockerCronJob($conn);
     }
 
     function isValidPassword($password) {
-        return preg_match('/^(?=[a-z])(?=[A-Z])[a-zA-Z]{8,}$/', $password);
+        return preg_match('/(?=.*[A-Z].*[A-Z])(?=.*[^a-zA-Z].*[^a-zA-Z]).{10,}',$password);
     }
 
     //Used to add a a user to the database. Input is sanitized before it gets here.
@@ -144,7 +144,7 @@ unlockerCronJob($conn);
             $error=true;
             return "4";
         }
-        if(isValidPassword($password)==1){
+        if(isValidPassword($password)==0){
             $error=true;
             return "5";
         }
@@ -182,8 +182,9 @@ unlockerCronJob($conn);
             }
             if($_GET["error"]=="5"){
                 $error='<div class="col-lg-12"><div class="alert alert-warning">Your passwords must meet the following criteria: </br></br>  
-                - The password has at least 8 characters.</br> 
-                - Consists of one capital & one lowercase letter.</div>';
+                - Has at least 8 characters.</br> 
+                - Has at least 2 Upper-case characters.</br> 
+                - Has at least 2 Numbers OR Symbols.</div>';
             }
             if($_GET["error"]=="6"){
                 $error='<div class="col-lg-12"><div class="alert alert-warning">Your passwords did not match.</div>';
@@ -203,9 +204,16 @@ unlockerCronJob($conn);
 
     function updatePassword($username, $oldPassword, $newPassword, $passwordConfirm, $conn){
 
+
         if($newPassword!=$passwordConfirm){
             return "6";
         }
+
+        if(isValidPassword($newPassword)==0){
+            return "5";
+        }
+
+        
         $options = ['cost' => 12];
 
         $stmt = $conn->prepare("SELECT username, password FROM users WHERE username=:username");

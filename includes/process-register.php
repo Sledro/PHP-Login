@@ -22,7 +22,7 @@ if (isset($_POST['username'], $_POST['password'], $_POST['passwordConfirm'])) {
         header('Location: ../register.php?error=4');
     }else  if(register($username, $password, $passwordConfirm, $conn) == 5){
         // register failed 
-        header('Location: ../registera.php?error=5');
+        header('Location: ../register.php?error=5');
     }
 
 } else {

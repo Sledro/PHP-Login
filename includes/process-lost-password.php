@@ -12,8 +12,9 @@ if (isset($_POST['username'], $_POST['oldPassword'], $_POST['newPassword'],  $_P
     $newPassword = $_POST['newPassword']; 
     $passwordConfirm = $_POST['passwordConfirm']; 
 
+    //echo updatePassword($username, $oldPassword, $newPassword, $passwordConfirm, $conn);
  
-  if (updatePassword($username, $oldPassword, $newPassword, $passwordConfirm, $conn) == 0) {
+    if (updatePassword($username, $oldPassword, $newPassword, $passwordConfirm, $conn) == 0) {
         // register success 
         header('Location: ../changePassword.php?error=9');
     } else  if(updatePassword($username, $oldPassword, $newPassword, $passwordConfirm, $conn) == 6){
@@ -25,6 +26,10 @@ if (isset($_POST['username'], $_POST['oldPassword'], $_POST['newPassword'],  $_P
     }else  if(updatePassword($username, $oldPassword, $newPassword, $passwordConfirm, $conn) == 8){
         // register failed 
         header('Location: ../changePassword.php?error=8');
+    }
+    else  if(updatePassword($username, $oldPassword, $newPassword, $passwordConfirm, $conn) == 5){
+        // register failed 
+        header('Location: ../changePassword.php?error=5');
     }
 
 } else {
