@@ -10,6 +10,7 @@ $username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_SESSION['username']); //XSS
 if(isUserLoggedIn($username,$conn)=="false")
 header('Location: ./index.php');
 
+$user=getUser($username, $conn);
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -21,7 +22,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
     <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./assets/css/style.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
 </head>
@@ -54,7 +55,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 				Welcome, <b><?php echo htmlentities($username); ?></b></br></br>
                 Thanks for logging into the secure Members Area  Welcome to the private members area.
 				</br></br>
-
+				<?php echo decrypt($user['email'])?>
 				To change you account settings, such as your password, click the 'Account' option locaed in the navigation menu bar.
 			</div>
 			</div>

@@ -35,7 +35,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
     <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./assets/css/style.css">
 <title>Login System</title>
 </head>
 
@@ -62,13 +62,25 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 							<?php echo $error;?>
 							<form id="register-form" action="./includes/process-register.php" method="post" role="form">
 								<div class="form-group">
+									<label>User ID:</label>
 									<input type="text" name="username" id="username" required pattern="[a-zA-Z0-9]+" title="Please use aplhanumeric charaters only." tabindex="1" class="form-control" placeholder="Username" value="">
 								</div>
 								<div class="form-group">
-									<input type="password" name="password" id="password" tabindex="2"  class="form-control" placeholder="Password">
+									<label>Password:</label>
+									<input type="password" required name="password" id="password" tabindex="2"  class="form-control" placeholder="Password">
 								</div>
 								<div class="form-group">
-									<input type="password" name="passwordConfirm" id="passwordConfirm" tabindex="2" class="form-control" placeholder="Confirm Password">
+									<label>Confirm Password:</label>
+									<input type="password" required name="passwordConfirm" id="passwordConfirm" tabindex="2" class="form-control" placeholder="Confirm Password">
+								</div>
+								<div class="form-group">
+									<label>Email:</label>
+									<input type="text" name="email" id="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" title="Please use aplhanumeric charaters only." tabindex="1" class="form-control" placeholder="test@test.com" value="">
+								</div>
+
+								<div class="form-group">
+									<label>Date of Birth:</label>
+									<input type="text" id="date" required class="form-control" data-format="DD-MM-YYYY" data-template="DD-MMM-YYYY" name="dob" placeholder="DD-MM-YYYY">
 								</div>
 								<div class="form-group">
 									<div class="row">

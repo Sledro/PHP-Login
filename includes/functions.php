@@ -141,8 +141,12 @@ unlockerCronJob($conn);
         }
     }
 
+    function isValidDateOfBirth($dob){
+        return preg_match("/^(\d{2})-(\d{2})-(\d{4})$/", $dob);
+    }
+
     //Used to add a a user to the database. Input is sanitized before it gets here.
-    function register($username, $password, $passwordConfirm, $conn){
+    function register($username, $password, $passwordConfirm, $email, $dob, $conn){
         $error=false;
         if(isValidUsername($username)==1){
             $error=true;
@@ -156,15 +160,36 @@ unlockerCronJob($conn);
             $error=true;
             return "5";
         }
+        if((!filter_var($email, FILTER_VALIDATE_EMAIL))){
+            $error=true;
+            return "10";
+        }
+        if(isValidDateOfBirth($dob)==0){
+            $error=true;
+            return "11";
+        }
+       
+        //Check that username is not already in use, if it is return an error.
+        $stmt = $conn->prepare("SELECT username FROM users WHERE username=:username");
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($stmt->rowCount() > 0) {
+            $error=true;
+            return "12";
+        }
+
+        //If no errors, continue with registration 
         if($error==false){
 
             $options = ['cost' => 12];
-        
             // prepare sql and bind parameters
-            $stmt = $conn->prepare("INSERT INTO users (username, password)
-            VALUES (:username, :password)");
+            $stmt = $conn->prepare("INSERT INTO users (username, password, email, dob)
+            VALUES (:username, :password, :email, :dob)");
             $stmt->bindParam(':username', $username);
             $stmt->bindParam(':password', password_hash($password, PASSWORD_DEFAULT, $options));
+            $stmt->bindParam(':email', base64_encode(encrypt($email)));
+            $stmt->bindParam(':dob', base64_encode(encrypt($dob)));
             $stmt->execute();    
             
             return "0";
@@ -206,6 +231,15 @@ unlockerCronJob($conn);
             }
             if($_GET["error"]=="9"){
                 $error='<div class="col-lg-12"><div class="alert alert-success">Your password has been updated.</div>';
+            }
+            if($_GET["error"]=="10"){
+                $error='<div class="col-lg-12"><div class="alert alert-warning">You did not eneter a valid email.</div>';
+            }
+            if($_GET["error"]=="11"){
+                $error='<div class="col-lg-12"><div class="alert alert-warning">You need to enter your date of birth in the format DD-MM-YYYY.</div>';
+            }
+            if($_GET["error"]=="12"){
+                $error='<div class="col-lg-12"><div class="alert alert-warning">Sorry, that username is already in use.</div>';
             }
             return $error;
         }
@@ -250,4 +284,45 @@ unlockerCronJob($conn);
         }
     }
 
+
+function encrypt($inputString){
+
+    $encryption_key = "LIVERPOOLFC2018!";
+    $iv = "LIVERPOOLFC2018!";
+
+    $crypt = openssl_encrypt(
+        $inputString,         // Input String
+        'AES-256-CBC',        // cipher and mode
+        $encryption_key,      // secret key
+        0,                    // options (not used)
+        $iv                   // initialisation vector
+    );
+
+    return base64_encode($crypt);
+}
+
+function decrypt($inputString){
+    $encryption_key = "LIVERPOOLFC2018!";
+    $iv = "LIVERPOOLFC2018!";
+
+    $crypt = openssl_decrypt(
+        $inputString,         // Input String
+        'AES-256-CBC',        // cipher and mode
+        $encryption_key,      // secret key
+        0,                    // options (not used)
+        $iv                   // initialisation vector
+    ); 
+
+    return base64_DEcode($crypt);
+}
+
+function getUser($username, $conn){
+    $username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $username); //XSS Security
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username=:username");
+    $stmt->bindParam(':username', $username);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $result;
+}
 ?> 
