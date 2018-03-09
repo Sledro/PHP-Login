@@ -31,6 +31,9 @@ if (isset($_POST['username'], $_POST['password'], $_POST['passwordConfirm'])) {
     }else  if(register($username, $password, $passwordConfirm, $email, $dob, $conn) == 11){
         // register failed 
         header('Location: ../register.php?error=11');
+    }else  if(register($username, $password, $passwordConfirm, $email, $dob, $conn) == 12){
+        // register failed 
+        header('Location: ../register.php?error=12');
     }
 
 } else {

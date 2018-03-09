@@ -8,7 +8,13 @@ if(isset($_SESSION['username']))
 $username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_SESSION['username']); //XSS Security
 
 if(isUserLoggedIn($username,$conn)=="false")
-    header('Location: ./index.php');
+header('Location: ./index.php');
+
+$user=getUser($username, $conn);
+
+$data=readlog();
+$logSection1=$data[0];
+
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -34,7 +40,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 				<div class="panel-heading">
 					<div class="row">
 						<div class="col-xs-15">
-							<a href="./membersArea.php" id="login-form-link">Account</a>
+							<a href="./membersArea.php" id="login-form-link">Members Area</a>
 						</div>
 					</div>
 					<hr>
@@ -43,18 +49,27 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 				<nav class="navbar navbar-default">
 				<div class="container-fluid">
 					<ul class="nav navbar-nav">
-					<li><a  href="./membersArea.php">Members Area</a></li>
-					<li class="active"><a href="./account.php">Account</a></li>
+					<li class="active"><a href="./membersArea.php">Members Area</a></li>
+					<li><a href="./account.php">Account</a></li>
 					<li><a href="#">News</a></li>
 					<li><a href="./log.php">Log</a></li>
 					<li><a href="./logout.php">Logout</a></li>
 					</ul>
 				</div>
 				</nav>
-				Welcome, <b><?php echo htmlentities($_SESSION['username']); ?></b></br></br>
-                This is the account section. Here you can manage your account settings.
-				</br></br>
-				<a href="./changePassword.php" id="register-form-link">Click here to reset your password.</a>
+                <?php 
+                $len = count($data);
+                for($i=0;$i<$len;$i++){
+                 echo'<div class="jumbotron" style="padding:5px;">';
+                echo  "<strong>Happened at:</strong> " . date('m/d/Y H:i:s',(int)decrypt($data[$i][0])) . " <br/>";
+                echo  "<strong>Logged at:</strong> " . date('m/d/Y H:i:s', (int)decrypt($data[$i][2])) . " <br/>";
+                echo  "<strong>User:</strong> " . decrypt($data[$i][1]) . " <br/>";
+                echo  "<strong>Action:</strong> " . decrypt($data[$i][3]) . " <br/>";
+                echo  "<strong>Query:</strong> " . decrypt($data[$i][4]) . " <br/>";
+                echo  "<strong>Result:</strong> " . decrypt($data[$i][5]) . " <br/>";
+                echo" </div>";
+                }
+                ?>
 			</div>
 			</div>
 		</div>

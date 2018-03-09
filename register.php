@@ -40,7 +40,9 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 </head>
 
 <body>
-
+<?php 
+   echo base64_decode("SzBreGJXdElRVkJ6V0dFM1VXOXlNaTlSWmtSWGRsTTNSekl5Wm5SelVTOVNNbGRyWW5nMFZ6Vm1VVDA9");
+   //echo decrypt("test"); ?>
 <div class="container">
 	<div class="row">
 		<div class="col-md-6 col-md-offset-3">

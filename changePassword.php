@@ -9,9 +9,13 @@ unlockerCronJob($conn);
 
 $username=null;
 //Note an SSL connection is required to prevent network sniffing
-if(isset($_SESSION['username']))
+if(isset($_SESSION['username'])){
 	$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_SESSION['username']); //XSS Security
-
+	if(!empty($_POST)){
+	 generateResetToken($conn, $username);
+	}
+	 $token = getResetToken($username,$conn);
+}
 if(isUserLoggedIn($username,$conn)!="true")
 	header('Location: ./index.php');
 
@@ -61,6 +65,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 					<li><a  href="./membersArea.php">Members Area</a></li>
 					<li class="active"><a href="./account.php">Account</a></li>
 					<li><a href="#">News</a></li>
+					<li><a href="./log.php">Log</a></li>
 					<li><a href="./logout.php">Logout</a></li>
 					</ul>
 				</div>
@@ -68,6 +73,10 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 					<div class="row">
 						<div class="col-lg-12">
 							<?php echo $error;?>
+							<?php echo $token;?>
+							<form action="./changePassword.php" method="post" role="form">
+							<input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Update Password">
+							</form>
 							<form id="register-form" action="./includes/process-lost-password.php" method="post" role="form">
 								<div class="form-group">
 									<input type="password" name="oldPassword" id="oldPassword" tabindex="1" class="form-control" placeholder="Current Password">

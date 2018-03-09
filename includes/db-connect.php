@@ -13,4 +13,5 @@ catch(PDOException $e)
     header('Location: ./setup.php');
     //echo "Connection failed: " . $e->getMessage();
     }
+    
 ?> 
