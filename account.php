@@ -4,11 +4,15 @@ include_once 'includes/functions.php';
  
 sec_session_start();
 
-if(isset($_SESSION['username']))
+if(isset($_SESSION['username'])){
 $username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_SESSION['username']); //XSS Security
+$user=getUser($username, $conn);
+}
 
 if(isUserLoggedIn($username,$conn)=="false")
-    header('Location: ./index.php');
+	header('Location: ./index.php');
+	
+
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -45,16 +49,18 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 					<ul class="nav navbar-nav">
 					<li><a  href="./membersArea.php">Members Area</a></li>
 					<li class="active"><a href="./account.php">Account</a></li>
-					<li><a href="#">News</a></li>
+					<li><a href="./changePassword.php">Password Reset</a></li>
 					<li><a href="./log.php">Log</a></li>
 					<li><a href="./logout.php">Logout</a></li>
 					</ul>
 				</div>
 				</nav>
 				Welcome, <b><?php echo htmlentities($_SESSION['username']); ?></b></br></br>
-                This is the account section. Here you can manage your account settings.
+                This is the account section. Here you can manage your account settings and view your info.
 				</br></br>
-				<a href="./changePassword.php" id="register-form-link">Click here to reset your password.</a>
+				<strong>Decrypted user email:</strong> <?php echo decrypt($user['email']);?></br>
+				<strong>Decrypted user dob:</strong> <?php echo decrypt($user['dob']);?></br></br>
+				</br>
 			</div>
 			</div>
 		</div>

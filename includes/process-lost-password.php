@@ -5,31 +5,41 @@ include_once 'functions.php';
  
 sec_session_start(); // Our custom secure way of starting a PHP session.
  
-if (isset($_POST['username'], $_POST['oldPassword'], $_POST['newPassword'],  $_POST['passwordConfirm'])) {
+if (isset($_POST['username'], $_POST['email'], $_POST['dob'] , $_POST['newPassword'],  $_POST['passwordConfirm'], $_POST['token'])) {
 
+    $token = $_POST['token'];
     $username = $_POST['username'];
-    $oldPassword = $_POST['oldPassword']; 
+    $email = $_POST['email']; 
+    $dob = $_POST['dob']; 
     $newPassword = $_POST['newPassword']; 
     $passwordConfirm = $_POST['passwordConfirm']; 
 
     //echo updatePassword($username, $oldPassword, $newPassword, $passwordConfirm, $conn);
  
-    if (updatePassword($username, $oldPassword, $newPassword, $passwordConfirm, $conn) == 0) {
+    if (updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 0) {
         // register success 
         header('Location: ../changePassword.php?error=9');
-    } else  if(updatePassword($username, $oldPassword, $newPassword, $passwordConfirm, $conn) == 6){
+    } else  if(updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 6){
         // register failed 
         header('Location: ../changePassword.php?error=6');
-    } else  if(updatePassword($username, $oldPassword, $newPassword, $passwordConfirm, $conn) == 7){
+    } else  if(updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 7){
         // register failed 
         header('Location: ../changePassword.php?error=7');
-    }else  if(updatePassword($username, $oldPassword, $newPassword, $passwordConfirm, $conn) == 8){
+    }else  if(updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 8){
         // register failed 
         header('Location: ../changePassword.php?error=8');
-    }
-    else  if(updatePassword($username, $oldPassword, $newPassword, $passwordConfirm, $conn) == 5){
+    }else  if(updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 5){
         // register failed 
         header('Location: ../changePassword.php?error=5');
+    }else  if(updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 13){
+            // register failed 
+            header('Location: ../changePassword.php?error=13');
+    }else  if(updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 14){
+        // register failed 
+        header('Location: ../changePassword.php?error=14');
+    }else  if(updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 15){
+        // register failed 
+        header('Location: ../changePassword.php?error=15');
     }
 
 } else {

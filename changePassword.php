@@ -63,8 +63,8 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 				<div class="container-fluid">
 					<ul class="nav navbar-nav">
 					<li><a  href="./membersArea.php">Members Area</a></li>
-					<li class="active"><a href="./account.php">Account</a></li>
-					<li><a href="#">News</a></li>
+					<li ><a href="./account.php">Account</a></li>
+					<li class="active"><a href="./changePassword.php">Password Reset</a></li>
 					<li><a href="./log.php">Log</a></li>
 					<li><a href="./logout.php">Logout</a></li>
 					</ul>
@@ -73,13 +73,22 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 					<div class="row">
 						<div class="col-lg-12">
 							<?php echo $error;?>
-							<?php echo $token;?>
 							<form action="./changePassword.php" method="post" role="form">
-							<input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Update Password">
+							<input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Request New Token"><br/><br/>
+							<div class="col-lg-12"><div class="alert alert-success">Reset Token: <?php echo $token;?></div>
+							<p>Click the button above to generate a new password reset token. Paste the token received into the box below to reset your password.<strong>
+								NOTE:Tokens will expired after 5 minutes from generataion time and are single use.</strong>
 							</form>
 							<form id="register-form" action="./includes/process-lost-password.php" method="post" role="form">
+
 								<div class="form-group">
-									<input type="password" name="oldPassword" id="oldPassword" tabindex="1" class="form-control" placeholder="Current Password">
+									<input type="text" name="token" id="token" tabindex="2" class="form-control" placeholder="Paste reset token here">
+								</div>
+								<div class="form-group">
+								<input type="text" name="email" id="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" title="Please use aplhanumeric charaters only." tabindex="1" class="form-control" placeholder="test@test.com">
+								</div>
+								<div class="form-group">
+									<input type="text" id="dob" required class="form-control" data-format="DD-MM-YYYY" data-template="DD-MMM-YYYY" name="dob" placeholder="DD-MM-YYYY">
 								</div>
 								<div class="form-group">
 									<input type="password" name="newPassword" id="newPassword" tabindex="2" class="form-control" placeholder="New Password">

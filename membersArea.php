@@ -47,7 +47,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 					<ul class="nav navbar-nav">
 					<li class="active"><a href="./membersArea.php">Members Area</a></li>
 					<li><a href="./account.php">Account</a></li>
-					<li><a href="#">News</a></li>
+					<li><a href="./changePassword.php">Password Reset</a></li>
 					<li><a href="./log.php">Log</a></li>
 					<li><a href="./logout.php">Logout</a></li>
 					</ul>
@@ -56,10 +56,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 				Welcome, <b><?php echo htmlentities($username); ?></b></br></br>
                 Thanks for logging into the secure Members Area  Welcome to the private members area.
 				</br></br>
-				<?php //echo decrypt($user['email']);?>
-
-				<?php //echo $user['email']?>
-				To change you account settings, such as your password, click the 'Account' option locaed in the navigation menu bar.
+				</br></br>
 			</div>
 			</div>
 		</div>

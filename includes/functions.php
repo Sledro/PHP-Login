@@ -1,5 +1,14 @@
 <?php
 unlockerCronJob($conn);
+expireOutdatedTokensCronJob($conn);
+
+
+
+// test password complexity
+// comments and tidy u[p]
+// update database script
+
+
 //Credit to https://www.wikihow.com/Create-a-Secure-Login-Script-in-PHP-and-MySQL for the secure session function (Slightly Modified)
 //I could have jused used session_start() but this function is widely used and adds extra security.
 function sec_session_start() {
@@ -229,7 +238,8 @@ function register($username, $password, $passwordConfirm, $email, $dob, $conn){
             $stmt->bindParam(':dob', encrypt($dob));
             $stmt->execute();    
         }catch(PDOException $exception){ 
-            logme($username,time(),"INSERT INTO users (username, password, email, dob) VALUES (:username, :password, :email, :dob)","Error", $exception, "n/a");
+            logme($username,time(),"INSERT INTO users (username, password, email, dob)
+            VALUES (:username, :password, :email, :dob)","Error", $exception, "n/a");
         }
         return "0";
     }
@@ -254,10 +264,10 @@ function errorLogging($errorNum){
         }
         if($_GET["error"]=="5"){
             $error='<div class="col-lg-12"><div class="alert alert-warning">Your passwords must meet the following criteria: </br></br>           
-- Must be a minimum of 8 characters</br> 
--  Must contain at least 1 number</br> 
-- Must contain at least one uppercase character</br> 
-- Must contain at least one lowercase character</br></div>';
+                    - Must be a minimum of 8 characters</br> 
+                    -  Must contain at least 1 number</br> 
+                    - Must contain at least one uppercase character</br> 
+                    - Must contain at least one lowercase character</br></div>';
         }
         if($_GET["error"]=="6"){
             $error='<div class="col-lg-12"><div class="alert alert-warning">Your passwords did not match.</div>';
@@ -266,7 +276,7 @@ function errorLogging($errorNum){
             $error='<div class="col-lg-12"><div class="alert alert-warning">Your username was not found. Do not edit sessions.</div>';
         }
         if($_GET["error"]=="8"){
-            $error='<div class="col-lg-12"><div class="alert alert-warning">You entered an incorrect old password.</div>';
+            $error='<div class="col-lg-12"><div class="alert alert-warning">Email entered did not match records.</div>';
         }
         if($_GET["error"]=="9"){
             $error='<div class="col-lg-12"><div class="alert alert-success">Your password has been updated.</div>';
@@ -280,11 +290,20 @@ function errorLogging($errorNum){
         if($_GET["error"]=="12"){
             $error='<div class="col-lg-12"><div class="alert alert-warning">Sorry, that username is already in use.</div>';
         }
+        if($_GET["error"]=="13"){
+            $error='<div class="col-lg-12"><div class="alert alert-warning">Sorry, you entered an invalid token.</div>';
+        }
+        if($_GET["error"]=="14"){
+            $error='<div class="col-lg-12"><div class="alert alert-warning">Sorry, that token has expired, please request a new token.</div>';
+        }
+        if($_GET["error"]=="15"){
+            $error='<div class="col-lg-12"><div class="alert alert-warning">Sorry, the date of birth you entered did not match our records.</div>';
+        }
         return $error;
     }
 }
 
-function updatePassword($username, $oldPassword, $newPassword, $passwordConfirm, $conn){
+function updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn){
 
 
     if($newPassword!=$passwordConfirm){
@@ -295,39 +314,60 @@ function updatePassword($username, $oldPassword, $newPassword, $passwordConfirm,
         return "5";
     }
 
+    if(getResetToken($username, $conn)!=$token){
+        return "13";
+    }
+
+    if(isResetTokenExpired($username, $conn)==1){
+        return "14";
+    }
+
     $options = ['cost' => 12];
 
     try{
-        $stmt = $conn->prepare("SELECT username, password FROM users WHERE username=:username");
+        $stmt = $conn->prepare("SELECT * FROM users WHERE username=:username");
         $stmt->bindParam(':username', $username);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
     }catch(PDOException $exception){ 
-        logme($username,time(),"SELECT username, password FROM users WHERE username=:username","Error", $exception, "n/a");
+        logme($username,time(),"SELECT * FROM users WHERE username=:username","Error", $exception, "n/a");
     }
 
     if ($stmt->rowCount() > 0) {
-    
-        $hash=$result['password'];
 
-        if (password_verify($oldPassword, $hash)) {
+  $decryptedRemovePadding = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', decrypt($result['email']));
+  $decryptedRemovePadding2 = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', decrypt($result['dob']));
+        if ($email==$decryptedRemovePadding) {
 
-            // Increment login attempt counter
-            try{
-                $stmt = $conn->prepare("UPDATE users SET password=:newPassword WHERE username=:username ");
-                $stmt->bindParam(':newPassword', password_hash($newPassword, PASSWORD_DEFAULT, $options));
-                $stmt->bindParam(':username', $username);
-                $stmt->execute();
-            }catch(PDOException $exception){ 
-                logme($username,time(),"SELECT username, password FROM users WHERE username=:username","Error", $exception, "n/a");
-            }
+            if ($dob==  $decryptedRemovePadding2 ) {
+                    // Increment login attempt counter
+                    try{
+                        $stmt = $conn->prepare("UPDATE users SET password=:newPassword WHERE username=:username");
+                        $stmt->bindParam(':newPassword', password_hash($newPassword, PASSWORD_DEFAULT, $options));
+                        $stmt->bindParam(':username', $username);
+                        $stmt->execute();
+                    }catch(PDOException $exception){ 
+                        logme($username,time(),"SUPDATE users SET password=:newPassword WHERE username=:username","Error", $exception, "n/a");
+                    }
 
-            logme($username,time(),"Password Reset","UPDATE users SET password=:newPassword WHERE username=:username","Success", "n/a");
+                    try{
+                        $stmt = $conn->prepare("UPDATE users SET tokenExpired='1' WHERE username=:username");
+                        $stmt->bindParam(':username', $username);
+                        $stmt->execute();
+                    }catch(PDOException $exception){ 
+                        logme($username,time(),"PDOException","UPDATE users SET tokenExpired='1' WHERE username=:username","Error", $exception, "n/a");
+                    }
 
-            return "0";
+                    logme($username,time(),"Password Reset","UPDATE users SET password=:newPassword WHERE username=:username","Success", "n/a");
+
+                    return "0";
+                }else{
+                    logme($username,time(),"Password Reset","UPDATE users SET password=:newPassword WHERE username=:username","Failed", "DOB entered did not match records.");
+                    return "15"; //DOB entered did not match records
+                }
         }
-        logme($username,time(),"Password Reset","UPDATE users SET password=:newPassword WHERE username=:username","Failed", "Old password not correct");
-        return "8"; //Old password not correct //////error here, saying incorrect old password even tho its correct
+        logme($username,time(),"Password Reset","UPDATE users SET password=:newPassword WHERE username=:username","Failed", "Email entered did not match records.");
+        return "8"; //Email entered did not match records.
     }else{
         logme($username,time(),"Password Reset","UPDATE users SET password=:newPassword WHERE username=:username","Failed - Username not found", "username not found");
         return "7"; //Usernae not found
@@ -343,7 +383,7 @@ function updatePassword($username, $oldPassword, $newPassword, $passwordConfirm,
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
         }catch(PDOException $exception){ 
-            logme($username,time(),"SELECT username, password FROM users WHERE username=:username","Error", $exception, "n/a");
+            logme($username,time(),"SELECT * FROM users WHERE username=:username","Error", $exception, "n/a");
         }
         return $result;
     }
@@ -390,7 +430,7 @@ function pkcs7_pad($data, $size)
 }
 
 function logme($user,$timestamp,$action,$query,$result,$content){
-    $file = fopen("./includes/log.csv", "a");
+    $file = fopen("log.csv", "a");
     $currTime = time();
     $line = encrypt($currTime) .  "," . encrypt($user) .  "," . encrypt($timestamp) .  "," . encrypt($action) .  "," . encrypt($query) .  "," . encrypt($result) . "," . encrypt($content) . PHP_EOL;
     fwrite($file, $line); # $line is an array of string values here
@@ -409,27 +449,51 @@ function generateResetToken($conn, $username){
     // prepare sql and bind parameters
     try{
         $timestampr=time();
-        $stmt = $conn->prepare("UPDATE users SET token = :token, tokenCreatedTimestamp=:timestampr WHERE username=:username");
+        $stmt = $conn->prepare("UPDATE users SET token = :token, tokenExpired='0', tokenCreatedTimestamp=:timestampr WHERE username=:username");
          $stmt->bindParam(':username', $username);
         $stmt->bindParam(':token', $token);
         $stmt->bindParam(':timestampr', $timestampr);
         $stmt->execute();    
     }catch(PDOException $exception){ 
-        logme($username,time(),"INSERT INTO users (token) VALUES (:token)","Error", $exception, "n/a");
+        logme($username,time(),"UPDATE users SET token = :token, tokenCreatedTimestamp=:timestampr WHERE username=:username","Error", $exception, "n/a");
     }
 }
 
     function getResetToken($username, $conn){
         try{
             $username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $username); //XSS Security
-            $stmt = $conn->prepare("SELECT * FROM users WHERE username=:username");
+            $stmt = $conn->prepare("SELECT token FROM users WHERE username=:username");
             $stmt->bindParam(':username', $username);
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
         }catch(PDOException $exception){ 
-            logme($username,time(),"SELECT * FROM users WHERE username=:username","Error", $exception, "n/a");
+            logme($username,time(),"SELECT token FROM users WHERE username=:username","Error", $exception, "n/a");
         }
         return $result['token'];
+    }
+
+    function isResetTokenExpired($username, $conn){
+        try{
+            $username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $username); //XSS Security
+            $stmt = $conn->prepare("SELECT tokenExpired FROM users WHERE username=:username");
+            $stmt->bindParam(':username', $username);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        }catch(PDOException $exception){ 
+            logme($username,time(),"SELECT tokenExpired FROM users WHERE username=:username","Error", $exception, "n/a");
+        }    
+        
+        return $result['tokenExpired'];
+    }
+
+    function expireOutdatedTokensCronJob($conn){
+        try{
+            $unclockTime = time()-300;
+            $stmt = $conn->prepare("UPDATE users SET tokenExpired='1' WHERE tokenCreatedTimestamp < $unclockTime");
+            $stmt->execute();
+        }catch(PDOException $exception){ 
+            logme($username,time(),"PDOException","UPDATE users SET tokenExpired = 1 WHERE tokenCreatedTimestamp >= $unclockTime","Error", $exception, "n/a");
+        }
     }
 
 ?> 
