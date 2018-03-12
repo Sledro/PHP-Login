@@ -4,13 +4,15 @@ include_once 'includes/functions.php';
  
 sec_session_start();
 
-if(isset($_SESSION['username']))
-$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_SESSION['username']); //XSS Security
+if(isset($_SESSION['uid'])){
+$uid = preg_replace("/[^0-9]/", "", $_SESSION['uid']); //XSS Security
+$user=getUser($uid, $conn);
+}
 
-if(isUserLoggedIn($username,$conn)=="false")
+if(isUserLoggedIn($uid,$conn)=="false")
 header('Location: ./index.php');
 
-$user=getUser($username, $conn);
+
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -47,13 +49,12 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 					<ul class="nav navbar-nav">
 					<li class="active"><a href="./membersArea.php">Members Area</a></li>
 					<li><a href="./account.php">Account</a></li>
-					<li><a href="./changePassword.php">Password Reset</a></li>
 					<li><a href="./log.php">Log</a></li>
 					<li><a href="./logout.php">Logout</a></li>
 					</ul>
 				</div>
 				</nav>
-				Welcome, <b><?php echo htmlentities($username); ?></b></br></br>
+				Welcome, <b><?php echo decrypt($user['username']); ?></b></br></br>
                 Thanks for logging into the secure Members Area  Welcome to the private members area.
 				</br></br>
 				</br></br>

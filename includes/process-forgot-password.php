@@ -18,28 +18,31 @@ if (isset($_POST['username'], $_POST['email'], $_POST['dob'] , $_POST['newPasswo
  
     if (updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 0) {
         // register success 
-        header('Location: ../changePassword.php?error=9');
+        header('Location: ../forgotPassword.php?error=9');
     } else  if(updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 6){
         // register failed 
-        header('Location: ../changePassword.php?error=6');
+        header('Location: ../forgotPassword.php?error=6');
     } else  if(updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 7){
         // register failed 
-        header('Location: ../changePassword.php?error=7');
+        header('Location: ../forgotPassword.php?error=7');
     }else  if(updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 8){
         // register failed 
-        header('Location: ../changePassword.php?error=8');
+        header('Location: ../forgotPassword.php?error=8');
     }else  if(updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 5){
         // register failed 
-        header('Location: ../changePassword.php?error=5');
+        header('Location: ../forgotPassword.php?error=5');
     }else  if(updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 13){
             // register failed 
-            header('Location: ../changePassword.php?error=13');
+            header('Location: ../forgotPassword.php?error=13');
     }else  if(updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 14){
         // register failed 
-        header('Location: ../changePassword.php?error=14');
+        header('Location: ../forgotPassword.php?error=14');
     }else  if(updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 15){
         // register failed 
-        header('Location: ../changePassword.php?error=15');
+        header('Location: ../forgotPassword.php?error=15');
+    }else  if(updatePassword($username, $email, $dob, $newPassword, $passwordConfirm, $token, $conn) == 16){
+        // register failed 
+        header('Location: ../forgotPassword.php?error=16');
     }
 
 } else {

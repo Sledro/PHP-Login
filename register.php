@@ -4,9 +4,6 @@ include_once 'includes/functions.php';
  
 sec_session_start();
 
-//This cron job unlocks all locked out accounts
-unlockerCronJob($conn);
-
 //Note an SSL connection is required to prevent network sniffing
 if(isset($_SESSION['username']))
 	$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_SESSION['username']); //XSS Security
@@ -61,7 +58,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 							<?php echo $error;?>
 							<form id="register-form" action="./includes/process-register.php" method="post" role="form">
 								<div class="form-group">
-									<label>User ID:</label>
+									<label>Username:</label>
 									<input type="text" name="username" id="username" required pattern="[a-zA-Z0-9]+" title="Please use aplhanumeric charaters only." tabindex="1" class="form-control" placeholder="Username" value="">
 								</div>
 								<div class="form-group">

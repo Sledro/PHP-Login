@@ -10,15 +10,15 @@ if (isset($_POST['username'], $_POST['password'])) {
     $password = $_POST['password']; // The hashed password.
     $username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $username); //XSS Security
 
-    if(checkIfLockedOut($username, $conn)=="false"){
-        if (login($username, $password, $conn) == true) {
-            // Login success 
-            header('Location: ../membersArea.php');
-        } else {
-            // Login failed 
-            header('Location: ../index.php?error=1&username='.$username);
-        }
-    }else{
+    $login=login($username, $password, $conn);
+
+    if ($login == "0") {
+        // Login success 
+        header('Location: ../membersArea.php');
+    } else  if ($login == "1") {
+        // Login failed 
+        header('Location: ../index.php?error=1&username='.$username);
+    }else {
         header('Location: ../index.php?error=2&username='.$username);
     }
 } else {

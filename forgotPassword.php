@@ -4,20 +4,15 @@ include_once 'includes/functions.php';
  
 sec_session_start();
 
-//This cron job unlocks all locked out accounts
-unlockerCronJob($conn);
+$user=null;
 
-$username=null;
-//Note an SSL connection is required to prevent network sniffing
-if(isset($_SESSION['username'])){
-	$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_SESSION['username']); //XSS Security
-	if(!empty($_POST)){
-	 generateResetToken($conn, $username);
-	}
-	 $token = getResetToken($username,$conn);
+if(!empty($_POST['emailReset'])){
+	$user=getUserFromEmail($_POST['emailReset'],$conn);
+	generateResetToken($conn, $user['uid']);
+	$email=filter_var($_POST['emailReset'], FILTER_VALIDATE_EMAIL);
+
 }
-if(isUserLoggedIn($username,$conn)!="true")
-	header('Location: ./index.php');
+$token = getResetToken($user['uid'],$conn);
 
 //Error handling
 $error=null;
@@ -53,7 +48,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 				<div class="panel-heading">
 					<div class="row">
 						<div class="col-xs-12">
-							<a href="./register.php" class="active" id="register-form-link">Change Password</a>
+							<a href="./register.php" class="active" id="register-form-link">Forgot Password Reset</a>
 						</div>
 					</div>
 					<hr>
@@ -62,24 +57,22 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 				<nav class="navbar navbar-default">
 				<div class="container-fluid">
 					<ul class="nav navbar-nav">
-					<li><a  href="./membersArea.php">Members Area</a></li>
-					<li ><a href="./account.php">Account</a></li>
-					<li class="active"><a href="./changePassword.php">Password Reset</a></li>
-					<li><a href="./log.php">Log</a></li>
-					<li><a href="./logout.php">Logout</a></li>
+					<li><a  href="./index.php">Home</a></li>
+					<li><a  href="./index.php">Login</a></li>
 					</ul>
 				</div>
 				</nav>
 					<div class="row">
 						<div class="col-lg-12">
 							<?php echo $error;?>
-							<form action="./changePassword.php" method="post" role="form">
-							<input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Request New Token"><br/><br/>
-							<div class="col-lg-12"><div class="alert alert-success">Reset Token: <?php echo $token;?></div>
-							<p>Click the button above to generate a new password reset token. Paste the token received into the box below to reset your password.<strong>
-								NOTE:Tokens will expired after 5 minutes from generataion time and are single use.</strong>
-							</form>
-							<form id="register-form" action="./includes/process-lost-password.php" method="post" role="form">
+
+							<?php if($token){
+							echo'<div class="col-lg-12"><div class="alert alert-success">'. $token.'</div>';
+							?>
+							<p>Paste the token received into the box below to reset your password.</p>
+							<p><strong>Token will expired after 5 minutes and is single use.</strong></p>
+							
+							<form id="register-form" action="./includes/process-forgot-password.php" method="post" role="form">
 
 								<div class="form-group">
 									<input type="text" name="token" id="token" tabindex="2" class="form-control" placeholder="Paste reset token here">
@@ -96,7 +89,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 								<div class="form-group">
 									<input type="password" name="passwordConfirm" id="passwordConfirm" tabindex="2" class="form-control" placeholder="Confirm New Password">
 								</div>
-								<input type="hidden" name="username" id="username" tabindex="1" class="form-control" value="<?php echo $username?>">
+								<input type="hidden" name="username" id="username" tabindex="1" class="form-control" value="<?php echo $user['username']?>">
 								<div class="form-group">
 									<div class="row">
 										<div class="col-sm-6 col-sm-offset-3">
@@ -105,6 +98,16 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 									</div>
 								</div>
 							</form>
+							<?}else{?>
+								<form action="./forgotPassword.php" method="post" role="form">
+							<p>Enter you email address below and submit the button to generate a reset token.
+							<div class="form-group">
+								<input type="text" name="emailReset" id="emailReset" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" title="Please use aplhanumeric charaters only." tabindex="1" class="form-control" placeholder="test@test.com">
+							</div>
+							<input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Request New Token"><br/><br/>
+							
+							</form>
+							<?}?>
 						</div>
 					</div>
 				</div>

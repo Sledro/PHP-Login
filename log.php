@@ -4,12 +4,10 @@ include_once 'includes/functions.php';
  
 sec_session_start();
 
-if(isset($_SESSION['username']))
-$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_SESSION['username']); //XSS Security
-
-if(isUserLoggedIn($username,$conn)=="false")
-header('Location: ./index.php');
-
+if(isset($_SESSION['uid'])){
+	$uid = preg_replace("/[^0-9]/", "", $_SESSION['uid']); //XSS Security
+	$user=getUser($uid, $conn);
+	}
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -46,7 +44,6 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 					<ul class="nav navbar-nav">
 					<li><a href="./membersArea.php">Members Area</a></li>
 					<li><a href="./account.php">Account</a></li>
-					<li><a href="./changePassword.php">Password Reset</a></li>
 					<li class="active"><a href="./log.php">Log</a></li>
 					<li><a href="./logout.php">Logout</a></li>
 					</ul>
@@ -64,6 +61,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 						echo  "<strong>Action:</strong> " . decrypt($data[$i][3]) . " <br/>";
 						echo  "<strong>Query:</strong> " . decrypt($data[$i][4]) . " <br/>";
 						echo  "<strong>Result:</strong> " . decrypt($data[$i][5]) . " <br/>";
+						echo  "<strong>Misc:</strong> " . decrypt($data[$i][6]) . " <br/>";
 						echo" </div>";
 						}				
 					}else{

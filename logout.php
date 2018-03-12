@@ -5,10 +5,12 @@ include_once 'includes/db-connect.php';
 include_once './includes/functions.php';
 sec_session_start();
  
-if(isset($_SESSION['username'])){
-$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_SESSION['username']); //XSS Security
-logme($username,time(),"Logout","Success", $exception, "n/a");
-}
+
+
+if(isset($_SESSION['uid'])){
+        $uid = preg_replace("/[^0-9]/", "", $_SESSION['uid']); //XSS Security
+        logme($uid,time(),"Logout","Success", $exception, "n/a");
+        }
 
 
 // Unset all session values 

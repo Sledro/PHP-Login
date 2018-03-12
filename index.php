@@ -6,18 +6,15 @@ include_once 'includes/functions.php';
 
 sec_session_start();
 
-//This cron job unlocks all locked out accounts
-unlockerCronJob($conn);
 
 //Note an SSL connection is required to prevent network sniffing
-if(isset($_SESSION['username']))
-	$username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $_SESSION['username']); //XSS Security
+if(isset($_SESSION['uid'])){
+	$uid = preg_replace("/[^0-9]/", "", $_SESSION['uid']); //XSS Security
+	if(isUserLoggedIn($uid,$conn)=="true")
+		header('Location: ./membersArea.php');
+}
 
-if(isUserLoggedIn($username,$conn)=="true")
-	header('Location: ./membersArea.php');
 
-if(isUserLoggedIn($username,$conn)=="true")
-	header('Location: ./membersArea.php');
 
 //Error handling
 $error=null;
@@ -83,7 +80,7 @@ Credit to https://bootsnipp.com/snippets/featured/login-and-register-tabbed-form
 									<div class="row">
 										<div class="col-lg-12">
 											<div class="text-center">
-												<a href="recover.php" tabindex="5" class="forgot-password">Forgot Password?</a>
+												<a href="forgotPassword.php" tabindex="5" class="forgot-password">Forgot Password?</a>
 											</div>
 										</div>
 									</div>
